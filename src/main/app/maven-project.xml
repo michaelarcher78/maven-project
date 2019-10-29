@@ -31,7 +31,7 @@ http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/jso
    </flow>
 
    <flow name="retrieveFlights">
-      <http:listener config-ref="HTTP_Listener_Configuration" path="/flights" doc:name="HTTP" />
+      <http:listener config-ref="HTTP_Listener_Configuration" path="/retrieveFlights" doc:name="HTTP" />
       <db:select config-ref="Derby_Configuration" doc:name="Database">
          <db:parameterized-query>
             <![CDATA[SELECT * FROM FLIGHTS]]>
@@ -39,11 +39,11 @@ http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/jso
       </db:select>
         <json:object-to-json-transformer doc:name="Object to JSON"/>
         <set-property propertyName="#['Content-Type']" value="#['application/json']" encoding="UTF-8" mimeType="application/json" doc:name="Property"/>
-      <jms:outbound-endpoint queue="flights" connector-ref="Active_MQ" doc:name="JMS" />
+      <jms:outbound-endpoint queue="flights" connector-ref="Active_MQ" doc:name="JMS: flights" />
    </flow>
 
     <flow name="logFlights">
-        <jms:inbound-endpoint queue="flights" connector-ref="Active_MQ" doc:name="JMS"/>
+        <jms:inbound-endpoint queue="flights" connector-ref="Active_MQ" doc:name="JMS: flights"/>
         <logger message="#[message.payload]" level="INFO" doc:name="Logger"/>
     </flow>
 </mule>
